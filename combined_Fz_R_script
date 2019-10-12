@@ -1,0 +1,48 @@
+# load required packages
+require(readxl)
+library(tidyverse)
+
+
+#setwd
+#'P20' is where the csv files are located
+#'
+jumpfiles <- list.files(path = c('Fz_t'), pattern = '.csv', recursive = T, full.names = T)
+
+#for the loop
+
+Force_Time=substr(jumpfiles, 1, nchar(jumpfiles)-8)
+
+# **********************************************************************
+
+# pdf design
+# set pdf filename
+
+pdf('combined_force_trace_PXX.pdf', width = 7, height = 11)
+par(mfrow=c(5,2)) #make 5x2 layout to make plots
+par(mar=c(2, 2,1.5,1)) #set margins
+par(omi = rep(.3, 4))
+  
+
+# **********************************************************************
+
+# PDF loop 
+# 31 represents how many files are in folder P20
+# change this number for each folder
+# Time etc multiplied by 0.001 (force plates 1000Hz)
+# Combined_Force <- Jump.1[,41] ... 41 is the column number e.g. col AO where combined Fz is located
+
+  for (i in 1:30){
+    Jump.1 = read.csv(jumpfiles[i], skip=4,header=TRUE, sep=",")
+    
+    Time <- 1:nrow(Jump.1)*0.001
+    Combined_Force <- Jump.1[,41]*(-1)
+   
+    
+    plot(Time, Combined_Force, type = "l", lty=1, ylab = "Force (N)",
+         main =Force_Time[i], xlab = "Time (s)", col= "red")
+             legend("topleft", c("Combined_Fz"),
+           col = c("red"), lty = c(1))
+            
+  }
+  dev.off()
+  
